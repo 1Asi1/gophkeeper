@@ -1,0 +1,4 @@
+syntax = "proto3";
+package gophkeeper_grpc;
+
+option go_package = "rpc/proto";
