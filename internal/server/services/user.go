@@ -11,7 +11,7 @@ import (
 	"gophkeeper/internal/server/repository"
 )
 
-type IUser interface {
+type UserService interface {
 	Create(context.Context, models.User) (uuid.UUID, error)
 	Get(context.Context, string) (models.User, error)
 	ComparePassword(models.User, string) (bool, error)
@@ -38,7 +38,7 @@ func (s *User) Create(ctx context.Context, req models.User) (uuid.UUID, error) {
 		Password: hashedPassword,
 	}
 
-	id, err := s.storage.Create(ctx, user)
+	id, err := s.storage.CreateUser(ctx, user)
 	if err != nil {
 		return uuid.UUID{}, fmt.Errorf("s.storage.Create: %w", err)
 	}
@@ -47,13 +47,12 @@ func (s *User) Create(ctx context.Context, req models.User) (uuid.UUID, error) {
 }
 
 func (s *User) Get(ctx context.Context, email string) (models.User, error) {
-	res, err := s.storage.Get(ctx, email)
+	res, err := s.storage.GetUser(ctx, email)
 	if err != nil {
 		return models.User{}, fmt.Errorf("s.storage.Get: %w", err)
 	}
 
 	return models.User{
-		ID:       res.ID.String(),
 		Email:    res.Email,
 		Password: string(res.Password),
 	}, err

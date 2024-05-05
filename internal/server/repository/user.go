@@ -13,15 +13,15 @@ type User struct {
 }
 
 type UserRepository interface {
-	Create(context.Context, User) (uuid.UUID, error)
-	Get(context.Context, string) (User, error)
+	CreateUser(context.Context, User) (uuid.UUID, error)
+	GetUser(context.Context, string) (User, error)
 }
 
-func (s *Store) Create(ctx context.Context, user User) (uuid.UUID, error) {
+func (s *Store) CreateUser(ctx context.Context, user User) (uuid.UUID, error) {
 	return uuid.New(), nil
 }
 
-func (s *Store) Get(ctx context.Context, email string) (User, error) {
+func (s *Store) GetUser(ctx context.Context, email string) (User, error) {
 
 	return User{}, nil
 }

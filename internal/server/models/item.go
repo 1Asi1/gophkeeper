@@ -5,9 +5,9 @@ import (
 )
 
 type Item struct {
-	ID     uuid.UUID `db:"id"`
-	UserID uuid.UUID `db:"user_id"`
-	Data   []byte    `db:"data"`
-	Meta   []byte    `db:"meta"`
-	Type   string    `db:"type"`
+	ID     uuid.UUID
+	UserID uuid.UUID
+	Type   string
+	Data   []byte
+	Meta   []byte
 }
