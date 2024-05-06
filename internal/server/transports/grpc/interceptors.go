@@ -24,7 +24,7 @@ type Stream struct {
 	Ctx context.Context
 }
 
-func AuthInterceptor(auth services.Auth) grpc.UnaryServerInterceptor {
+func AuthInterceptor(auth services.AuthService) grpc.UnaryServerInterceptor {
 	return func(
 		ctx context.Context,
 		req interface{},
@@ -43,7 +43,7 @@ func AuthInterceptor(auth services.Auth) grpc.UnaryServerInterceptor {
 	}
 }
 
-func AuthStreamInterceptor(auth services.Auth) grpc.StreamServerInterceptor {
+func AuthStreamInterceptor(auth services.AuthService) grpc.StreamServerInterceptor {
 	return func(
 		srv interface{},
 		ss grpc.ServerStream,

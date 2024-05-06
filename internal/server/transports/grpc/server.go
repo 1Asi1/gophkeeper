@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"google.golang.org/grpc"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	"gophkeeper/internal/server/models"
@@ -25,7 +24,7 @@ func NewGophkeeperGrpcService(authS services.AuthService, itemS services.ItemSer
 	return &GophkeeperGrpcService{authS: authS, itemS: itemS}
 }
 
-func (s *GophkeeperGrpcService) Register(ctx context.Context, req *proto.AuthRequest, opts ...grpc.CallOption) (*proto.AuthResponse, error) {
+func (s *GophkeeperGrpcService) Register(ctx context.Context, req *proto.AuthRequest) (*proto.AuthResponse, error) {
 	model := models.User{Email: req.Email, Password: req.Password}
 	id, err := s.authS.Create(ctx, model)
 	if err != nil {
@@ -44,7 +43,7 @@ func (s *GophkeeperGrpcService) Register(ctx context.Context, req *proto.AuthReq
 	}, nil
 }
 
-func (s *GophkeeperGrpcService) Login(ctx context.Context, req *proto.AuthRequest, opts ...grpc.CallOption) (*proto.AuthResponse, error) {
+func (s *GophkeeperGrpcService) Login(ctx context.Context, req *proto.AuthRequest) (*proto.AuthResponse, error) {
 	user, err := s.authS.Get(ctx, req.Email)
 	if err != nil {
 		return nil, fmt.Errorf("s.userS.Get: %w", err)
@@ -70,7 +69,7 @@ func (s *GophkeeperGrpcService) Login(ctx context.Context, req *proto.AuthReques
 	}, nil
 }
 
-func (s *GophkeeperGrpcService) Create(ctx context.Context, req *proto.ItemRequest, opts ...grpc.CallOption) (*proto.ItemIDResponse, error) {
+func (s *GophkeeperGrpcService) Create(ctx context.Context, req *proto.ItemRequest) (*proto.ItemIDResponse, error) {
 	idCtx := ctx.Value(UserID)
 	id, err := uuid.Parse(idCtx.(string))
 	if err != nil {
@@ -94,7 +93,7 @@ func (s *GophkeeperGrpcService) Create(ctx context.Context, req *proto.ItemReque
 	}, nil
 }
 
-func (s *GophkeeperGrpcService) Update(ctx context.Context, req *proto.ItemRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (s *GophkeeperGrpcService) Update(ctx context.Context, req *proto.ItemRequest) (*emptypb.Empty, error) {
 	idCtx := ctx.Value(UserID)
 	id, err := uuid.Parse(idCtx.(string))
 	if err != nil {
@@ -116,7 +115,7 @@ func (s *GophkeeperGrpcService) Update(ctx context.Context, req *proto.ItemReque
 	return &emptypb.Empty{}, nil
 }
 
-func (s *GophkeeperGrpcService) GetAllByType(ctx context.Context, req *proto.GetByTypeRequest, opts ...grpc.CallOption) (*proto.GetResponse, error) {
+func (s *GophkeeperGrpcService) GetAllByType(ctx context.Context, req *proto.GetByTypeRequest) (*proto.GetResponse, error) {
 	idCtx := ctx.Value(UserID)
 	id, err := uuid.Parse(idCtx.(string))
 	if err != nil {
@@ -141,7 +140,7 @@ func (s *GophkeeperGrpcService) GetAllByType(ctx context.Context, req *proto.Get
 	return &proto.GetResponse{Items: res}, nil
 }
 
-func (s *GophkeeperGrpcService) Get(ctx context.Context, req *proto.ItemIDRequest, opts ...grpc.CallOption) (*proto.Item, error) {
+func (s *GophkeeperGrpcService) Get(ctx context.Context, req *proto.ItemIDRequest) (*proto.Item, error) {
 	id, err := uuid.ParseBytes(req.Id)
 	if err != nil {
 		return nil, fmt.Errorf("uuid.Parse: %w", err)
@@ -160,7 +159,7 @@ func (s *GophkeeperGrpcService) Get(ctx context.Context, req *proto.ItemIDReques
 	}, nil
 }
 
-func (s *GophkeeperGrpcService) GetAll(ctx context.Context, req *proto.ItemIDRequest, opts ...grpc.CallOption) (*proto.GetResponse, error) {
+func (s *GophkeeperGrpcService) GetAll(ctx context.Context, req *emptypb.Empty) (*proto.GetResponse, error) {
 	idCtx := ctx.Value(UserID)
 	id, err := uuid.Parse(idCtx.(string))
 	if err != nil {
@@ -185,7 +184,7 @@ func (s *GophkeeperGrpcService) GetAll(ctx context.Context, req *proto.ItemIDReq
 	return &proto.GetResponse{Items: res}, nil
 }
 
-func (s *GophkeeperGrpcService) Delete(ctx context.Context, req *proto.ItemIDRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (s *GophkeeperGrpcService) Delete(ctx context.Context, req *proto.ItemIDRequest) (*emptypb.Empty, error) {
 	id, err := uuid.ParseBytes(req.Id)
 	if err != nil {
 		return nil, fmt.Errorf("uuid.Parse: %w", err)

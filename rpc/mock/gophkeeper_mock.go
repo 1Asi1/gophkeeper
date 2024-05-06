@@ -98,7 +98,7 @@ func (mr *MockGophkeeperGrpcClientMockRecorder) Get(ctx, in interface{}, opts ..
 }
 
 // GetAll mocks base method.
-func (m *MockGophkeeperGrpcClient) GetAll(ctx context.Context, in *gen.ItemIDRequest, opts ...grpc.CallOption) (*gen.GetResponse, error) {
+func (m *MockGophkeeperGrpcClient) GetAll(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*gen.GetResponse, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
@@ -266,7 +266,7 @@ func (mr *MockGophkeeperGrpcServerMockRecorder) Get(arg0, arg1 interface{}) *gom
 }
 
 // GetAll mocks base method.
-func (m *MockGophkeeperGrpcServer) GetAll(arg0 context.Context, arg1 *gen.ItemIDRequest) (*gen.GetResponse, error) {
+func (m *MockGophkeeperGrpcServer) GetAll(arg0 context.Context, arg1 *emptypb.Empty) (*gen.GetResponse, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetAll", arg0, arg1)
 	ret0, _ := ret[0].(*gen.GetResponse)
