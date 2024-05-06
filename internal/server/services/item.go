@@ -11,9 +11,9 @@ import (
 )
 
 type ItemService interface {
-	Create(context.Context, models.Item) error
+	Create(context.Context, models.Item) (uuid.UUID, error)
 	Update(context.Context, models.Item) error
-	Get(context.Context, uuid.UUID, uuid.UUID) (models.Item, error)
+	Get(context.Context, uuid.UUID) (models.Item, error)
 	GetAll(context.Context, uuid.UUID) ([]models.Item, error)
 	GetAllByType(context.Context, uuid.UUID, string) ([]models.Item, error)
 	Delete(context.Context, uuid.UUID) error
@@ -29,8 +29,8 @@ func NewItemService() *Item {
 	return &Item{}
 }
 
-func (s *Item) Create(ctx context.Context, req models.Item) error {
-	err := s.storage.CreateItem(ctx, repository.Item{
+func (s *Item) Create(ctx context.Context, req models.Item) (uuid.UUID, error) {
+	id, err := s.storage.CreateItem(ctx, repository.Item{
 		ID:     req.ID,
 		UserID: req.UserID,
 		Type:   req.Type,
@@ -38,10 +38,10 @@ func (s *Item) Create(ctx context.Context, req models.Item) error {
 		Meta:   req.Meta,
 	})
 	if err != nil {
-		return fmt.Errorf("s.storage.CreateItem: %w", err)
+		return uuid.UUID{}, fmt.Errorf("s.storage.CreateItem: %w", err)
 	}
 
-	return nil
+	return id, nil
 }
 
 func (s *Item) Update(ctx context.Context, req models.Item) error {
@@ -59,8 +59,8 @@ func (s *Item) Update(ctx context.Context, req models.Item) error {
 	return nil
 }
 
-func (s *Item) Get(ctx context.Context, itemID uuid.UUID, userID uuid.UUID) (models.Item, error) {
-	res, err := s.storage.GetItem(ctx, itemID, userID)
+func (s *Item) Get(ctx context.Context, itemID uuid.UUID) (models.Item, error) {
+	res, err := s.storage.GetItem(ctx, itemID)
 	if err != nil {
 		return models.Item{}, fmt.Errorf("s.storage.GetItem: %w", err)
 	}

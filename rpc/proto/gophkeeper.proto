@@ -10,11 +10,11 @@ service gophkeeperGrpc {
   rpc Register(AuthRequest) returns (AuthResponse);
   rpc Login(AuthRequest) returns (AuthResponse);
   rpc Create(ItemRequest) returns (ItemIDResponse);
-  rpc Delete(ItemRequest) returns (google.protobuf.Empty);
   rpc Update(ItemRequest) returns (google.protobuf.Empty);
   rpc GetAllByType(GetByTypeRequest) returns (GetResponse);
   rpc Get(ItemIDRequest) returns (Item);
   rpc GetAll(ItemIDRequest) returns (GetResponse);
+  rpc Delete(ItemIDRequest) returns (google.protobuf.Empty);
 }
 
 message AuthRequest {
@@ -29,8 +29,9 @@ message AuthResponse{
 
 message Item{
   bytes id = 1;
-  bytes meta = 2;
-  bytes data = 3;
+  string type = 2;
+  bytes meta = 3;
+  bytes data = 4;
 }
 
 message ItemRequest{

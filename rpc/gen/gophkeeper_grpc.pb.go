@@ -23,11 +23,11 @@ const (
 	GophkeeperGrpc_Register_FullMethodName     = "/gophkeeper_grpc.gophkeeperGrpc/Register"
 	GophkeeperGrpc_Login_FullMethodName        = "/gophkeeper_grpc.gophkeeperGrpc/Login"
 	GophkeeperGrpc_Create_FullMethodName       = "/gophkeeper_grpc.gophkeeperGrpc/Create"
-	GophkeeperGrpc_Delete_FullMethodName       = "/gophkeeper_grpc.gophkeeperGrpc/Delete"
 	GophkeeperGrpc_Update_FullMethodName       = "/gophkeeper_grpc.gophkeeperGrpc/Update"
 	GophkeeperGrpc_GetAllByType_FullMethodName = "/gophkeeper_grpc.gophkeeperGrpc/GetAllByType"
 	GophkeeperGrpc_Get_FullMethodName          = "/gophkeeper_grpc.gophkeeperGrpc/Get"
 	GophkeeperGrpc_GetAll_FullMethodName       = "/gophkeeper_grpc.gophkeeperGrpc/GetAll"
+	GophkeeperGrpc_Delete_FullMethodName       = "/gophkeeper_grpc.gophkeeperGrpc/Delete"
 )
 
 // GophkeeperGrpcClient is the client API for GophkeeperGrpc service.
@@ -37,11 +37,11 @@ type GophkeeperGrpcClient interface {
 	Register(ctx context.Context, in *AuthRequest, opts ...grpc.CallOption) (*AuthResponse, error)
 	Login(ctx context.Context, in *AuthRequest, opts ...grpc.CallOption) (*AuthResponse, error)
 	Create(ctx context.Context, in *ItemRequest, opts ...grpc.CallOption) (*ItemIDResponse, error)
-	Delete(ctx context.Context, in *ItemRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	Update(ctx context.Context, in *ItemRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	GetAllByType(ctx context.Context, in *GetByTypeRequest, opts ...grpc.CallOption) (*GetResponse, error)
 	Get(ctx context.Context, in *ItemIDRequest, opts ...grpc.CallOption) (*Item, error)
 	GetAll(ctx context.Context, in *ItemIDRequest, opts ...grpc.CallOption) (*GetResponse, error)
+	Delete(ctx context.Context, in *ItemIDRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type gophkeeperGrpcClient struct {
@@ -73,15 +73,6 @@ func (c *gophkeeperGrpcClient) Login(ctx context.Context, in *AuthRequest, opts 
 func (c *gophkeeperGrpcClient) Create(ctx context.Context, in *ItemRequest, opts ...grpc.CallOption) (*ItemIDResponse, error) {
 	out := new(ItemIDResponse)
 	err := c.cc.Invoke(ctx, GophkeeperGrpc_Create_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *gophkeeperGrpcClient) Delete(ctx context.Context, in *ItemRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, GophkeeperGrpc_Delete_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -124,6 +115,15 @@ func (c *gophkeeperGrpcClient) GetAll(ctx context.Context, in *ItemIDRequest, op
 	return out, nil
 }
 
+func (c *gophkeeperGrpcClient) Delete(ctx context.Context, in *ItemIDRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, GophkeeperGrpc_Delete_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // GophkeeperGrpcServer is the server API for GophkeeperGrpc service.
 // All implementations must embed UnimplementedGophkeeperGrpcServer
 // for forward compatibility
@@ -131,11 +131,11 @@ type GophkeeperGrpcServer interface {
 	Register(context.Context, *AuthRequest) (*AuthResponse, error)
 	Login(context.Context, *AuthRequest) (*AuthResponse, error)
 	Create(context.Context, *ItemRequest) (*ItemIDResponse, error)
-	Delete(context.Context, *ItemRequest) (*emptypb.Empty, error)
 	Update(context.Context, *ItemRequest) (*emptypb.Empty, error)
 	GetAllByType(context.Context, *GetByTypeRequest) (*GetResponse, error)
 	Get(context.Context, *ItemIDRequest) (*Item, error)
 	GetAll(context.Context, *ItemIDRequest) (*GetResponse, error)
+	Delete(context.Context, *ItemIDRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedGophkeeperGrpcServer()
 }
 
@@ -152,9 +152,6 @@ func (UnimplementedGophkeeperGrpcServer) Login(context.Context, *AuthRequest) (*
 func (UnimplementedGophkeeperGrpcServer) Create(context.Context, *ItemRequest) (*ItemIDResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
 }
-func (UnimplementedGophkeeperGrpcServer) Delete(context.Context, *ItemRequest) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
-}
 func (UnimplementedGophkeeperGrpcServer) Update(context.Context, *ItemRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
 }
@@ -166,6 +163,9 @@ func (UnimplementedGophkeeperGrpcServer) Get(context.Context, *ItemIDRequest) (*
 }
 func (UnimplementedGophkeeperGrpcServer) GetAll(context.Context, *ItemIDRequest) (*GetResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAll not implemented")
+}
+func (UnimplementedGophkeeperGrpcServer) Delete(context.Context, *ItemIDRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
 }
 func (UnimplementedGophkeeperGrpcServer) mustEmbedUnimplementedGophkeeperGrpcServer() {}
 
@@ -230,24 +230,6 @@ func _GophkeeperGrpc_Create_Handler(srv interface{}, ctx context.Context, dec fu
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(GophkeeperGrpcServer).Create(ctx, req.(*ItemRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _GophkeeperGrpc_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ItemRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(GophkeeperGrpcServer).Delete(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: GophkeeperGrpc_Delete_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GophkeeperGrpcServer).Delete(ctx, req.(*ItemRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -324,6 +306,24 @@ func _GophkeeperGrpc_GetAll_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _GophkeeperGrpc_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ItemIDRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GophkeeperGrpcServer).Delete(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: GophkeeperGrpc_Delete_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GophkeeperGrpcServer).Delete(ctx, req.(*ItemIDRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // GophkeeperGrpc_ServiceDesc is the grpc.ServiceDesc for GophkeeperGrpc service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -344,10 +344,6 @@ var GophkeeperGrpc_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _GophkeeperGrpc_Create_Handler,
 		},
 		{
-			MethodName: "Delete",
-			Handler:    _GophkeeperGrpc_Delete_Handler,
-		},
-		{
 			MethodName: "Update",
 			Handler:    _GophkeeperGrpc_Update_Handler,
 		},
@@ -362,6 +358,10 @@ var GophkeeperGrpc_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetAll",
 			Handler:    _GophkeeperGrpc_GetAll_Handler,
+		},
+		{
+			MethodName: "Delete",
+			Handler:    _GophkeeperGrpc_Delete_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

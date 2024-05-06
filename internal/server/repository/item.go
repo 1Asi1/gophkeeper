@@ -15,23 +15,23 @@ type Item struct {
 }
 
 type ItemRepository interface {
-	CreateItem(context.Context, Item) error
+	CreateItem(context.Context, Item) (uuid.UUID, error)
 	UpdateItem(context.Context, Item) error
-	GetItem(context.Context, uuid.UUID, uuid.UUID) (Item, error)
+	GetItem(context.Context, uuid.UUID) (Item, error)
 	GetItems(context.Context, uuid.UUID) ([]Item, error)
 	GetItemsByType(context.Context, uuid.UUID, string) ([]Item, error)
 	DeleteItem(context.Context, uuid.UUID) error
 }
 
-func (s *Store) CreateItem(ctx context.Context, model Item) error {
-	return nil
+func (s *Store) CreateItem(ctx context.Context, model Item) (uuid.UUID, error) {
+	return uuid.UUID{}, nil
 }
 
 func (s *Store) UpdateItem(ctx context.Context, model Item) error {
 	return nil
 }
 
-func (s *Store) GetItem(ctx context.Context, itemID uuid.UUID, userID uuid.UUID) (Item, error) {
+func (s *Store) GetItem(ctx context.Context, itemID uuid.UUID) (Item, error) {
 	return Item{}, nil
 }
 

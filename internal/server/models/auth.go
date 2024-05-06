@@ -9,3 +9,9 @@ type Auth struct {
 	ID uuid.UUID
 	jwt.RegisteredClaims
 }
+
+type User struct {
+	ID       uuid.UUID
+	Email    string
+	Password string
+}

@@ -8,22 +8,36 @@ import (
 
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/google/uuid"
+	"github.com/rs/zerolog"
+	"golang.org/x/crypto/bcrypt"
 	"google.golang.org/grpc/metadata"
 	"gophkeeper/internal/server/models"
 	"gophkeeper/internal/server/oops"
+	"gophkeeper/internal/server/repository"
 )
 
 type AuthService interface {
 	Generate(uuid.UUID, time.Time) (string, error)
 	GetUser(context.Context) (uuid.UUID, error)
+	Create(context.Context, models.User) (uuid.UUID, error)
+	Get(context.Context, string) (models.User, error)
+	ComparePassword(models.User, string) (bool, error)
 }
 
 type Auth struct {
-	Key string
+	log     zerolog.Logger
+	storage repository.Store
+	ctx     context.Context
+	Key     string
 }
 
-func NewAuthService(key string) *Auth {
-	return &Auth{key}
+func NewAuthService(ctx context.Context, storage repository.Store, key string, log zerolog.Logger) *Auth {
+	return &Auth{
+		log:     log,
+		storage: storage,
+		ctx:     ctx,
+		Key:     key,
+	}
 }
 
 func (s *Auth) Generate(id uuid.UUID, expireAt time.Time) (string, error) {
@@ -66,4 +80,43 @@ func (s *Auth) GetUser(ctx context.Context) (uuid.UUID, error) {
 	}
 
 	return claims.ID, nil
+}
+
+func (s *Auth) Create(ctx context.Context, req models.User) (uuid.UUID, error) {
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), 8)
+	if err != nil {
+		return uuid.UUID{}, fmt.Errorf("bcrypt.GenerateFromPassword: %w", err)
+	}
+
+	user := repository.User{
+		Email:    req.Email,
+		Password: hashedPassword,
+	}
+
+	id, err := s.storage.CreateUser(ctx, user)
+	if err != nil {
+		return uuid.UUID{}, fmt.Errorf("s.storage.Create: %w", err)
+	}
+
+	return id, nil
+}
+
+func (s *Auth) Get(ctx context.Context, email string) (models.User, error) {
+	res, err := s.storage.GetUser(ctx, email)
+	if err != nil {
+		return models.User{}, fmt.Errorf("s.storage.Get: %w", err)
+	}
+
+	return models.User{
+		Email:    res.Email,
+		Password: string(res.Password),
+	}, err
+}
+
+func (s *Auth) ComparePassword(req models.User, password string) (bool, error) {
+	if err := bcrypt.CompareHashAndPassword([]byte(req.Password), []byte(password)); err != nil {
+		return false, fmt.Errorf(" bcrypt.CompareHashAndPassword: %w", err)
+	}
+
+	return true, nil
 }

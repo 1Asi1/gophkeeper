@@ -58,7 +58,7 @@ func (mr *MockGophkeeperGrpcClientMockRecorder) Create(ctx, in interface{}, opts
 }
 
 // Delete mocks base method.
-func (m *MockGophkeeperGrpcClient) Delete(ctx context.Context, in *gen.ItemRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (m *MockGophkeeperGrpcClient) Delete(ctx context.Context, in *gen.ItemIDRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
@@ -236,7 +236,7 @@ func (mr *MockGophkeeperGrpcServerMockRecorder) Create(arg0, arg1 interface{}) *
 }
 
 // Delete mocks base method.
-func (m *MockGophkeeperGrpcServer) Delete(arg0 context.Context, arg1 *gen.ItemRequest) (*emptypb.Empty, error) {
+func (m *MockGophkeeperGrpcServer) Delete(arg0 context.Context, arg1 *gen.ItemIDRequest) (*emptypb.Empty, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Delete", arg0, arg1)
 	ret0, _ := ret[0].(*emptypb.Empty)
