@@ -2,3 +2,53 @@ syntax = "proto3";
 package gophkeeper_grpc;
 
 option go_package = "rpc/proto";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+service gophkeeperGrpc {
+  rpc Register(AuthRequest) returns (AuthResponse);
+  rpc Login(AuthRequest) returns (AuthResponse);
+  rpc Create(ItemRequest) returns (ItemIDResponse);
+  rpc Delete(ItemRequest) returns (google.protobuf.Empty);
+  rpc Update(ItemRequest) returns (google.protobuf.Empty);
+  rpc GetAllByType(GetByTypeRequest) returns (GetResponse);
+  rpc Get(ItemIDRequest) returns (Item);
+  rpc GetAll(ItemIDRequest) returns (GetResponse);
+}
+
+message AuthRequest {
+  string email = 1;
+  string password = 2;
+}
+
+message AuthResponse{
+  string token = 1;
+  google.protobuf.Timestamp expireAt = 2;
+}
+
+message Item{
+  bytes id = 1;
+  bytes meta = 2;
+  bytes data = 3;
+}
+
+message ItemRequest{
+  Item Request = 1;
+}
+
+message GetByTypeRequest {
+  string type = 1;
+}
+
+message GetResponse {
+  repeated Item Items  = 1;
+}
+
+message ItemIDRequest {
+  bytes id = 1;
+}
+
+message ItemIDResponse {
+  bytes id = 1;
+}
