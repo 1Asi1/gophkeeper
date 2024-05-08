@@ -50,7 +50,7 @@ func main() {
 	item := services.NewItemService(ctx, store, l)
 
 	s := apiserver.New(cfg, auth, item, l)
-	if err = s.Run(); err != nil {
+	if err = s.Run(ctx); err != nil {
 		l.Fatal().Err(err).Msg("server.Run")
 	}
 }

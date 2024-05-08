@@ -1,8 +1,11 @@
 package apiserver
 
 import (
+	"context"
 	"fmt"
 	"net"
+	"os"
+	"os/signal"
 	"sync"
 
 	"github.com/rs/zerolog"
@@ -30,7 +33,7 @@ func New(cfg config.Config, authS services.AuthService, itemS services.ItemServi
 	}
 }
 
-func (s *APIServer) Run() error {
+func (s *APIServer) Run(ctx context.Context) error {
 	tlsCredentials, err := credentials.NewServerTLSFromFile("cert/server-cert.pem", "cert/server-key.pem")
 	if err != nil {
 		return fmt.Errorf("credentials.NewServerTLSFromFile: %w", err)
@@ -49,13 +52,26 @@ func (s *APIServer) Run() error {
 		return fmt.Errorf("net.Listen: %w", err)
 	}
 
-	var wg sync.WaitGroup
-	wg.Add(1)
+	ctx, stop := signal.NotifyContext(ctx, os.Interrupt)
+
 	go func() {
 		if err = server.Serve(listen); err != nil {
 			s.log.Fatal().Msgf("failed to start server: %v", err)
 		}
 	}()
-	wg.Wait()
+
+	<-ctx.Done()
+	stop()
+
+	var shutdownWg sync.WaitGroup
+	shutdownWg.Add(1)
+	go func(wg *sync.WaitGroup) {
+		defer wg.Done()
+		server.GracefulStop()
+	}(&shutdownWg)
+
+	shutdownWg.Wait()
+	s.log.Info().Msg("shutting down gracefully")
+
 	return nil
 }
