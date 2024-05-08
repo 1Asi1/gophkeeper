@@ -21,12 +21,12 @@ type ItemService interface {
 
 type Item struct {
 	log     zerolog.Logger
-	storage repository.Store
+	storage *repository.Store
 	ctx     context.Context
 }
 
-func NewItemService() *Item {
-	return &Item{}
+func NewItemService(ctx context.Context, storage *repository.Store, log zerolog.Logger) *Item {
+	return &Item{ctx: ctx, storage: storage, log: log}
 }
 
 func (s *Item) Create(ctx context.Context, req models.Item) (uuid.UUID, error) {

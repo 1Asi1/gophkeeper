@@ -26,12 +26,12 @@ type AuthService interface {
 
 type Auth struct {
 	log     zerolog.Logger
-	storage repository.Store
+	storage *repository.Store
 	ctx     context.Context
 	Key     string
 }
 
-func NewAuthService(ctx context.Context, storage repository.Store, key string, log zerolog.Logger) *Auth {
+func NewAuthService(ctx context.Context, storage *repository.Store, key string, log zerolog.Logger) *Auth {
 	return &Auth{
 		log:     log,
 		storage: storage,

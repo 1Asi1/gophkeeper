@@ -5,8 +5,6 @@ import (
 	"encoding/json"
 	"flag"
 	"os"
-
-	"github.com/rs/zerolog"
 )
 
 type FileConfig struct {
@@ -21,7 +19,7 @@ type Config struct {
 	DSN  string
 }
 
-func New(l zerolog.Logger) (Config, error) {
+func New() (Config, error) {
 	cfgFile := flag.String("c", "config.json", "config name")
 	port := flag.String("p", "", "port to run server")
 	key := flag.String("k", "", "secret key")
@@ -30,10 +28,8 @@ func New(l zerolog.Logger) (Config, error) {
 	var cfgPathName string
 	cfgFileEnv, ok := os.LookupEnv("CONFIG")
 	if ok {
-		l.Info().Msgf("config value: %s", cfgFileEnv)
 		cfgPathName = cfgFileEnv
 	} else {
-		l.Info().Msgf("config address value: %s", *cfgFile)
 		cfgPathName = *cfgFile
 	}
 
