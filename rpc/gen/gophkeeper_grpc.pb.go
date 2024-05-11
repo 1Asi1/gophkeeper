@@ -40,7 +40,7 @@ type GophkeeperGrpcClient interface {
 	Update(ctx context.Context, in *ItemRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	GetAllByType(ctx context.Context, in *GetByTypeRequest, opts ...grpc.CallOption) (*GetResponse, error)
 	Get(ctx context.Context, in *ItemIDRequest, opts ...grpc.CallOption) (*Item, error)
-	GetAll(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetResponse, error)
+	GetAll(ctx context.Context, in *ItemIDRequest, opts ...grpc.CallOption) (*GetResponse, error)
 	Delete(ctx context.Context, in *ItemIDRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
@@ -106,7 +106,7 @@ func (c *gophkeeperGrpcClient) Get(ctx context.Context, in *ItemIDRequest, opts 
 	return out, nil
 }
 
-func (c *gophkeeperGrpcClient) GetAll(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetResponse, error) {
+func (c *gophkeeperGrpcClient) GetAll(ctx context.Context, in *ItemIDRequest, opts ...grpc.CallOption) (*GetResponse, error) {
 	out := new(GetResponse)
 	err := c.cc.Invoke(ctx, GophkeeperGrpc_GetAll_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -134,7 +134,7 @@ type GophkeeperGrpcServer interface {
 	Update(context.Context, *ItemRequest) (*emptypb.Empty, error)
 	GetAllByType(context.Context, *GetByTypeRequest) (*GetResponse, error)
 	Get(context.Context, *ItemIDRequest) (*Item, error)
-	GetAll(context.Context, *emptypb.Empty) (*GetResponse, error)
+	GetAll(context.Context, *ItemIDRequest) (*GetResponse, error)
 	Delete(context.Context, *ItemIDRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedGophkeeperGrpcServer()
 }
@@ -161,7 +161,7 @@ func (UnimplementedGophkeeperGrpcServer) GetAllByType(context.Context, *GetByTyp
 func (UnimplementedGophkeeperGrpcServer) Get(context.Context, *ItemIDRequest) (*Item, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Get not implemented")
 }
-func (UnimplementedGophkeeperGrpcServer) GetAll(context.Context, *emptypb.Empty) (*GetResponse, error) {
+func (UnimplementedGophkeeperGrpcServer) GetAll(context.Context, *ItemIDRequest) (*GetResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAll not implemented")
 }
 func (UnimplementedGophkeeperGrpcServer) Delete(context.Context, *ItemIDRequest) (*emptypb.Empty, error) {
@@ -289,7 +289,7 @@ func _GophkeeperGrpc_Get_Handler(srv interface{}, ctx context.Context, dec func(
 }
 
 func _GophkeeperGrpc_GetAll_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
+	in := new(ItemIDRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -301,7 +301,7 @@ func _GophkeeperGrpc_GetAll_Handler(srv interface{}, ctx context.Context, dec fu
 		FullMethod: GophkeeperGrpc_GetAll_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GophkeeperGrpcServer).GetAll(ctx, req.(*emptypb.Empty))
+		return srv.(GophkeeperGrpcServer).GetAll(ctx, req.(*ItemIDRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

@@ -13,7 +13,7 @@ service gophkeeperGrpc {
   rpc Update(ItemRequest) returns (google.protobuf.Empty);
   rpc GetAllByType(GetByTypeRequest) returns (GetResponse);
   rpc Get(ItemIDRequest) returns (Item);
-  rpc GetAll(google.protobuf.Empty) returns (GetResponse);
+  rpc GetAll(ItemIDRequest) returns (GetResponse);
   rpc Delete(ItemIDRequest) returns (google.protobuf.Empty);
 }
 
@@ -39,7 +39,8 @@ message ItemRequest{
 }
 
 message GetByTypeRequest {
-  string type = 1;
+  bytes id = 1;
+  string type = 2;
 }
 
 message GetResponse {
