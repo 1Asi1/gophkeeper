@@ -8,14 +8,14 @@ import (
 	"gophkeeper/internal/client/transports/interceptors"
 )
 
-func CreateGrpcConnection(targetPort string, tokenHolder *models.Token) (*grpc.ClientConn, error) {
+func CreateGrpcConnection(targetAddr string, tokenHolder *models.Token) (*grpc.ClientConn, error) {
 	tlsCredentials, err := loadTLSCredentials()
 	if err != nil {
 		return nil, err
 	}
 	tokenProcessor := interceptors.NewRequestTokenProcessor(tokenHolder)
 	return grpc.Dial(
-		targetPort,
+		targetAddr,
 		grpc.WithTransportCredentials(tlsCredentials),
 		grpc.WithUnaryInterceptor(tokenProcessor.TokenInterceptor()),
 		grpc.WithStreamInterceptor(tokenProcessor.TokenStreamInterceptor()),

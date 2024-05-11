@@ -159,7 +159,7 @@ func (s *GophkeeperGrpcService) Get(ctx context.Context, req *proto.ItemIDReques
 	}, nil
 }
 
-func (s *GophkeeperGrpcService) GetAll(ctx context.Context, req *emptypb.Empty) (*proto.GetResponse, error) {
+func (s *GophkeeperGrpcService) GetAll(ctx context.Context, req *proto.ItemIDRequest) (*proto.GetResponse, error) {
 	idCtx := ctx.Value(UserID)
 	id, err := uuid.Parse(idCtx.(string))
 	if err != nil {

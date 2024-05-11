@@ -8,6 +8,8 @@ import (
 	"github.com/google/uuid"
 )
 
+//go:generate mockgen -source=item.go -destination=./mock/item.go -package=mock
+
 type Item struct {
 	ID     uuid.UUID `db:"id"`
 	UserID uuid.UUID `db:"user_id"`

@@ -8,6 +8,8 @@ import (
 	"github.com/google/uuid"
 )
 
+//go:generate mockgen -source=auth.go -destination=./mock/auth.go -package=mock
+
 type User struct {
 	ID       uuid.UUID `db:"id"`
 	Email    string    `db:"email"`
